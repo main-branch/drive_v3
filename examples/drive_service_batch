@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# `batch` allows you to batch multiple requests into a single HTTP request
+#
+# See [Batching Requests](https://developers.google.com/drive/api/v3/batch)
+#
+# ```Ruby
+# drive_service.batch do |service|
+#   service.some_method(...)
+#   service.some_other_method(...)
+# end
+# ```
+#
+# The `batch` method yields a service object that can be used to make requests.
+#
+# Requests made within the block are sent in a single network request to the server.
+# These requests are not performed within a transaction. If one request fails,
+# subsequent requests will still be executed.
+#
+# The `batch` method returns after all requests have been completed.
+#
+# The return value should be ignored.
+#
+# The service methods calls within the block return nil. To collect the results
+# of the requests, you must pass a block to the service method as follows:
+#
+# ```Ruby
+# results = [].tap do |results|
+#   drive_service.batch do |service|
+#   service.some_method(...) do |res, err|
+#     results << (res || err)
+#   end
+# end
+#
+
+require 'drive_v3'
+
+@spreadsheet_ids = %w[
+  1MNb_59W87lj75-9HqrEQoFBdrQiNl96rDlRy87sDIjs
+  1AG9PC6iGXRmezc5lcF9MX-tR4rR2lvEC6zZZ0AOnqLk
+  1bQlb77ID8_AL1F0hEiJVfit4YUpy3Nw-qLckwpWLCcI
+  BOGUS_ID
+]
+
+drive_service = DriveV3.drive_service
+
+permission = Google::Apis::DriveV3::Permission.new(
+  type: 'user',
+  email_address: 'jcouball@gmail.com',
+  role: 'writer'
+)
+
+begin
+  results = [].tap do |request_results|
+    drive_service.batch do |service|
+      @spreadsheet_ids.each do |spreadsheet_id|
+        # In the batch block, `create_permission` returns nil instead of the result
+        #
+        # Collect the result (or error if there is one) in the block passed to
+        # `create_permission`
+        service.create_permission(spreadsheet_id, permission) do |res, err|
+          request_results << (res || err.message)
+        end
+      end
+    end
+  end
+
+  puts "Permission created: #{results.pretty_inspect}"
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+end

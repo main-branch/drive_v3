@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# `create_permission` creates a permission for a file.
+#
+# To create a permission:
+#
+#   1. Create a permission object with the `type` and `role`. If type=user or
+#      type=group, provide an `email_address`. If type=domain, provide a `domain`.
+#   2. Call the `create_permission` method with the fileId for the associated file
+#      or folder.
+#   3. The response returns an instance of a Permission resource, including the
+#      assigned permissionId.
+
+require 'drive_v3'
+
+@spreadsheet_id = '1MNb_59W87lj75-9HqrEQoFBdrQiNl96rDlRy87sDIjs'
+
+drive_service = DriveV3.drive_service
+
+# The new permission to create
+#
+# `type` can be user, group, domain, or anyone.
+#
+# When type=user or type=group, you must also provide an `email_address`.
+#
+# When type=domain, you must also provide a `domain``.
+#
+# See [Share files, folders & drives](https://developers.google.com/drive/api/guides/manage-sharing)
+#
+# See [Roles & permissions](https://developers.google.com/drive/api/guides/ref-roles)
+# for more information about the different roles.
+#
+permission = Google::Apis::DriveV3::Permission.new(
+  type: 'anyone',
+  role: 'writer'
+)
+
+# When type is user:
+# permission = Google::Apis::DriveV3::Permission.new(
+#   type: 'user',
+#   role: 'writer',
+#   email_address: 'jcouball@gmail.com'
+# )
+
+begin
+  result = drive_service.create_permission(@spreadsheet_id, permission)
+  # The result.id is 'anyoneWithLink' if type=anyone
+  # The result.id is of the existing permission if it already exists
+  puts "Permission created: #{result.to_h.pretty_inspect}"
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+end
