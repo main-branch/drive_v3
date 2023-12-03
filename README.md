@@ -54,7 +54,7 @@ gem install drive_v3
 ## Examples
 
 Many examples can be found in the `examples` directory of this project. The examples
-have [a README of their own](https://github.com/main-branch/drive_v3/tree/reformat_examples/examples)
+have [a README of their own](https://github.com/main-branch/drive_v3/blob/main/examples/README.md)
 which describes each example.
 
 Prior to running an example, clone this project and run `bundle install` in the
