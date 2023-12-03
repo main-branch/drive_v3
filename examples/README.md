@@ -91,7 +91,7 @@ Folders are treated as a type of file. For more details about folders, see
 
 ### ✅︎ Search for files
 
-[examples/list_examples](https://github.com/main-branch/drive_v3/blob/main/examples/list_files)
+[examples/file_search](https://github.com/main-branch/drive_v3/blob/main/examples/file_search)
 shows how to list all the files for the authenticated user.
 
 This example illustrates how to:
@@ -104,7 +104,7 @@ This example illustrates how to:
 
 ### ✅︎ Get file
 
-[examples/get_file](https://github.com/main-branch/drive_v3/blob/main/examples/get_file)
+[examples/file_get](https://github.com/main-branch/drive_v3/blob/main/examples/file_get)
 shows how to get a
 [File](https://github.com/googleapis/google-api-ruby-client/blob/main/generated/google-apis-drive_v3/lib/google/apis/drive_v3/classes.rb)
 from the drive and controlling which fields are returned.
@@ -119,7 +119,7 @@ Use the `:parents` parameter to give the id of the folder that should contain th
 file. Omitting this parameter or passing an empty array will place the new file
 in the user's `My Drive` root folder.
 
-[examples/create_empty_data_file](https://github.com/main-branch/drive_v3/blob/main/examples/drive_service_batch)
+[examples/file_create](https://github.com/main-branch/drive_v3/blob/main/examples/file_create)
 shows how to create an empty data file and write data to it.
 
 ### ✅︎ Create a folder
@@ -207,7 +207,7 @@ shows how to delete a file.
 ## Share files, folders, and drives
 
 Every Google Drive file, folder, and shared drive have associated
-[permission](https://developers.google.com/drive/api/v3/reference/permission)
+[permission](https://developers.google.com/drive/api/v3/reference/permissions)
 resources. Each resource identifies the permission for a specific `type` (user, group,
 domain, anyone) and `role`, such as "commenter" or "reader." For example, a file might
 have a permission granting a specific user (`type=user`) read-only access (`role=reader`)
