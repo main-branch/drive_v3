@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Read the content of a data file
+
+require 'drive_v3'
+require 'json'
+require 'stringio'
+
+drive_service = DriveV3.drive_service
+
+file_id = ARGV[0] || ENV.fetch('FILE_ID', nil)
+raise 'Missing file_id' unless file_id
+
+# download_dest can be an IO object that responds to `write` that will receive
+# the content of the file, or a string naming an existing file to be written
+# to.
+download_dest = StringIO.new
+
+# Read content from file
+#
+begin
+  drive_service.get_file(file_id, download_dest:)
+  puts JSON.pretty_generate(download_dest.string)
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+end

@@ -1,0 +1,165 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Creates a new permission for a file
+#
+# To add a permission:
+#
+#   1. Create a permission object with the `type` and `role`. If type=user or
+#      type=group, provide an `email_address`. If type=domain, provide a `domain`.
+#   2. Call the `create_permission` method with the id for the associated file
+#      or folder.
+#   3. The response returns an instance of a Permission resource, including the
+#      assigned id.
+
+require 'drive_v3'
+require 'optparse'
+
+# Parse the command line
+#
+# @example For a user or group
+#   permission-create FILE_ID \
+#     --type {user|group} \
+#     --email EMAIL \
+#     --role ROLE \
+#     [--expiration TIME] \
+#     [{--allow-file-discovery | --no-allow-file-discovery}]
+#
+# @example For a domain
+#   permission-create FILE_ID \
+#     --type domain \
+#     --domain NAME \
+#     --role ROLE \
+#     [--expiration TIME] \
+#     [{--allow-file-discovery | --no-allow-file-discovery}]
+#
+# @example For a anyone
+#   permission-create FILE_ID \
+#     --type anyone \
+#     --role ROLE \
+#     [--expiration TIME] \
+#     [{--allow-file-discovery | --no-allow-file-discovery}]
+#
+class PermissionCreateCli
+  def initialize(argv)
+    @argv = argv.dup
+    default_options
+    parser.parse!(@argv)
+    @file_id = @argv.shift || ENV.fetch('FILE_ID', nil)
+    validate(@argv)
+  end
+
+  attr_reader :file_id, :permission_id, :permission
+
+  def to_s
+    "'#{file_id}', #{permission}"
+  end
+
+  private
+
+  def banner = <<~BANNER
+    Usage:
+    #{$PROGRAM_NAME} FILE_ID [options]
+
+    Creates permission for a file.
+
+    Options:
+  BANNER
+
+  def parser
+    @parser ||= OptionParser.new(banner) do |opts|
+      option_definitions.each { |option_definition| opts.on(*option_definition) }
+    end
+  end
+
+  def help
+    puts parser
+    exit
+  end
+
+  def option_definitions
+    [
+      help_definition,
+      type_definition, email_definition, domain_definition, role_definition,
+      allow_file_discovery_definition, expiration_definition
+    ].freeze
+  end
+
+  def help_definition = ['-h', '--help', '', ->(_value) { help }]
+  def type_definition = ['--type=TYPE', ->(value) { @permission[:type] = value }]
+  def email_definition = ['--email=EMAIL', ->(value) { @permission[:email_address] = value }]
+  def domain_definition = ['--domain=DOMAIN', ->(value) { @permission[:domain] = value }]
+  def role_definition = ['--role=ROLE', ->(value) { @permission[:role] = value }]
+
+  def allow_file_discovery_definition
+    [
+      '--[no-]allow-file-discovery',
+      ->(value) { @permission[:allow_file_discovery] = value }
+    ]
+  end
+
+  def expiration_definition
+    [
+      '--expiration=TIME',
+      ->(value) { @permission[:expiration_time] = DateTime.parse(value) }
+    ]
+  end
+
+  def default_options
+    @file_id = nil
+    @permission = {
+      type: nil, email_address: nil, domain: nil, role: nil,
+      allow_file_discovery: nil, expiration_time: nil
+    }
+  end
+
+  def validate(argv)
+    raise "Extra command line arguments: #{argv}" unless argv.empty?
+
+    raise 'Missing file_id' unless file_id
+  end
+end
+
+# The new permission to create
+#
+# `type` can be user, group, domain, or anyone.
+#
+# When type=user or type=group, you must also provide an `email_address`.
+#
+# When type=domain, you must also provide a `domain``.
+#
+# See [Share files, folders & drives](https://developers.google.com/drive/api/guides/manage-sharing)
+#
+# See [Roles & permissions](https://developers.google.com/drive/api/guides/ref-roles)
+# for more information about the different roles.
+#
+# allow_file_discovery is not valid for individual users.
+#
+# @example: when type is 'anyone'
+#   permission = {
+#     allow_file_discovery: true,
+#     type: 'anyone',
+#     role: 'writer'
+#   }
+#
+# @example: when type is 'user'
+#   permission = {
+#     type: 'user',
+#     role: 'writer',
+#     email_address: 'jcouball@gmail.com'
+#   }
+#
+
+drive_service = DriveV3.drive_service
+
+options = PermissionCreateCli.new(ARGV)
+fields = '*'
+
+begin
+  result = drive_service.create_permission(options.file_id, options.permission, fields:)
+  # The result.id is 'anyoneWithLink' if type=anyone
+  # The result.id is of the existing permission if it already exists
+  puts JSON.pretty_generate(result.to_h)
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+end

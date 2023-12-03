@@ -1,14 +1,20 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# `list_files` returns a [FileList](https://github.com/googleapis/google-api-ruby-client/blob/main/generated/google-apis-drive_v3/lib/google/apis/drive_v3/classes.rb)
+# Search for files owned by the current user
+#
+# Returns a [FileList](https://github.com/googleapis/google-api-ruby-client/blob/main/generated/google-apis-drive_v3/lib/google/apis/drive_v3/classes.rb)
 # object. The FileList object has a `files` property that is an array of files returned.
 #
 # This example illustrates how to:
-#   1. specify a search query (to omit deleted files),
-#   2. specify which fields to return for each file,
-#   3. retrieve the name and link to the parent folder for each file, and
-#   4. retrieve pagenated results.
+#   1. specify a search query (to omit files in the trash)
+#   2. specify which fields to return for each file
+#   3. retrieve pagenated results
+#
+# Use the `jq` command to format the output of this script. For example:
+#   * List names: `bundle exec examples/list_files | jq '.[].name'`
+#   * List names and id's: `bundle exec examples/list_files | jq '[.[] | {name: .name, id: .id}]'`
+#   * List names and parents: `bundle exec examples/list_files | jq '[.[] | {name: .name, parents: .parents}]'`
 
 require 'drive_v3'
 
@@ -42,6 +48,7 @@ page_token = nil
 # See [Search for files & folders](https://developers.google.com/drive/api/v3/search-files)
 # for more information about how to use the `q` parameter.
 #
+# q = "trashed=false and '1V6RS_7_YgJmLDH-BDw3dpD8Np60Oi9ET' in parents"
 q = 'trashed=false'
 
 # If `fields` is not specified, the following fields are returned for each file:
@@ -56,35 +63,16 @@ q = 'trashed=false'
 # See [Return specific fields for a file](https://developers.google.com/drive/api/guides/fields-parameter)
 # for more information about how to retrieve other fields.
 #
-fields = 'nextPageToken, files(id, name, parents, web_view_link)'
+# fields = 'nextPageToken, files(id, name, parents, web_view_link)'
+fields = '*'
 
 loop do
   file_list = @drive_service.list_files(q:, fields:, page_token:, page_size:)
-  files += file_list.files
+  files += file_list.files.map(&:to_h)
   # Stop looping if there are no more pages
   break unless (page_token = file_list.next_page_token)
 end
 
-# Print as markdown with links to each file and its parents
-#
-# files.each do |file|
-#   print "[#{file.name}](#{file.web_view_link})"
-#   if file.parents
-#     parents = file.parents.map { |id| parent(id) }
-#     print ' (parents: '
-#     print parents.map { |p| "[#{p.name}](#{p.web_view_link})" }.join(', ')
-#     print ')'
-#   end
-#   puts
-# end
+# Print as JSON with links to each file and its parents
 
-files.each do |file|
-  print file.name
-  if file.parents
-    parents = file.parents.map { |id| parent(id) }
-    print ' (parents: '
-    print parents.map(&:name).join(', ')
-    print ')'
-  end
-  puts
-end
+puts JSON.pretty_generate(files)

@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Export a spreadsheet to a .tsv file
+#
+# To export a specific sheet, use the sheet_id parameter. To export multiple
+# sheets, use the sheet_ids parameter. Omitting the sheet_id parameter exports
+# the first sheet.
+#
+# To export to a different file type, change the mimeType parameter.
+
+require 'drive_v3'
+require 'json'
+
+drive_service = DriveV3.drive_service
+
+# First create a spreadsheet, populating with some data.
+# Then get the file id of the spreadsheet.
+
+name = 'My Test Spreadsheet'
+parents = [] # Create in the user's My Drive root folder
+mime_type = 'application/vnd.google-apps.spreadsheet'
+file_metadata = { name:, parents:, mime_type: }
+fields = 'id, name'
+upload_source = StringIO.new("1,2,3\n4,5,6\n7,8,9")
+content_type = 'text/csv'
+begin
+  file = drive_service.create_file(file_metadata, fields:, upload_source:, content_type:)
+  puts JSON.pretty_generate(file.to_h)
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+  exit 1
+end
+
+# Export the spreadsheet to a PDF file nameed 'My Test Spreadsheet.pdf'
+
+file_id = file.id
+mime_type = 'application/pdf'
+download_dest = "#{file.name}.pdf"
+
+begin
+  drive_service.export_file(file_id, mime_type, download_dest:)
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+  exit 1
+end
+
+puts "Exported #{file.name} to #{download_dest}"

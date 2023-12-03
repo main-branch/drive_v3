@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# `trash_file` shows how to move a file to the trash.
+#
+# Moving a file to the trash is done by updating the file's trashed attribute to
+# true. The process involves using the update method on the file you wish to move
+# to the trash.
+
+require 'drive_v3'
+
+drive_service = DriveV3.drive_service
+
+file_id = ARGV[0] || ENV.fetch('FILE_ID', nil)
+raise 'Missing file_id' unless file_id
+
+begin
+  print 'Trash file...'
+  file_object = { trashed: true }
+  file = drive_service.update_file(file_id, file_object)
+  puts "update_file result:\n#{file.to_h.pretty_inspect}"
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+end
