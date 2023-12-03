@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# List permissions for a file or folder
+
+require 'drive_v3'
+
+file_id = ARGV.shift || ENV.fetch('FILE_ID', nil)
+raise 'Missing file_id' unless file_id
+
+permission_id = ARGV.shift || ENV.fetch('PERMISSION_ID', nil)
+raise 'Missing permission_id' unless permission_id
+
+raise "Extra arguments: #{ARGV}" unless ARGV.empty?
+
+drive_service = DriveV3.drive_service
+
+begin
+  drive_service.delete_permission(file_id, permission_id)
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+end

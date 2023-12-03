@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Replace a file's content
+
+require 'drive_v3'
+
+drive_service = DriveV3.drive_service
+
+file_id = ARGV[0] || ENV.fetch('FILE_ID', nil)
+raise 'Missing file_id' unless file_id
+
+# upload_source can be an IO object that responds to `read` and `size` (e.g.
+# StringIO) or a string that names an existing file to upload.
+#
+upload_source = StringIO.new('This is the content that replaced the original content')
+
+# Replace the content of an existing file
+#
+begin
+  file = drive_service.update_file(file_id, upload_source:)
+  puts JSON.pretty_generate(file.to_h)
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+end

@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# `get_file` shows how to get a
+# [File](https://github.com/googleapis/google-api-ruby-client/blob/main/generated/google-apis-drive_v3/lib/google/apis/drive_v3/classes.rb)
+# from the drive controlling which fields are returned.
+
+require 'drive_v3'
+
+drive_service = DriveV3.drive_service
+
+file_id = ARGV[0] || '1MNb_59W87lj75-9HqrEQoFBdrQiNl96rDlRy87sDIjs'
+
+# If `fields` is not specified, the following fields are returned for each file:
+# id, name, mimeType, and kind.
+#
+# Could return all possible fields by specifying `fields: '*'`. See
+# [Return specific fields for a file](https://developers.google.com/drive/api/guides/fields-parameter)
+# for more information about how to retrieve other fields.
+#
+# fields = 'id, name, parents, web_view_link'
+fields = '*'
+
+begin
+  file = drive_service.get_file(file_id, fields:)
+  puts JSON.pretty_generate(file.to_h)
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+end

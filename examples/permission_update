@@ -1,0 +1,134 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Updates an existing permission for a file
+#
+# Use permission_list to list the existing permissions for a file.
+
+require 'drive_v3'
+require 'optparse'
+require 'time'
+
+# Parse command line arguments
+#
+# Usage: permission-update FILE_ID PERMISSION_ID \
+#   --remove-expiration \
+#   --type TYPE \
+#   --email EMAIL \
+#   --domain DOMAIN \
+#   --role ROLE \
+#   --[no-]allow-file-discovery \
+#   --expiration TIME
+#
+# Examples:
+#   permission-update 12345678 12345678 --expiration 2023-12-31T00:00:00-07:00
+#   permission-update 12345678 12345678 --remove-expiration
+#   permission-update 12345678 12345678 --role reader
+#   permission-update 12345678 12345678 --email jcouball@yahoo.com
+#   permission-update 12345678 12345678 --email jcouball@yahoo.com --role reader
+#   permission-update 12345678 12345678 --allow-file-discovery
+#   permission-update 12345678 12345678 --no-allow-file-discovery
+#
+class PermissionUpdateCli
+  def initialize(argv)
+    @argv = argv.dup
+    default_options
+    parser.parse!(@argv)
+    @file_id = @argv.shift || ENV.fetch('FILE_ID', nil)
+    @permission_id = @argv.shift || ENV.fetch('PERMISSION_ID', nil)
+    validate(@argv)
+  end
+
+  attr_reader :file_id, :permission_id, :permission, :remove_expiration
+
+  def to_s
+    "'#{file_id}', '#{permission_id}', #{permission}, remove_expiration: #{remove_expiration}"
+  end
+
+  private
+
+  def banner = <<~BANNER
+    Usage:
+    #{$PROGRAM_NAME} FILE_ID PERMISSION_ID [options]
+
+    Updates a permission for a file.
+    Use permission-create to create a new permission for a file.
+    User permission-list to list permissions for a file.
+
+    Options:
+  BANNER
+
+  def parser
+    @parser ||= OptionParser.new(banner) do |opts|
+      option_definitions.each { |option_definition| opts.on(*option_definition) }
+    end
+  end
+
+  def help
+    puts parser
+    exit
+  end
+
+  def option_definitions
+    [
+      help_definition, remove_expiration_definition, type_definition,
+      email_definition, domain_definition, role_definition,
+      allow_file_discovery_definition, expiration_definition
+    ].freeze
+  end
+
+  def help_definition = ['-h', '--help', '', ->(_value) { help }]
+  def type_definition = ['--type=TYPE', ->(value) { @permission[:type] = value }]
+  def email_definition = ['--email=EMAIL', ->(value) { @permission[:email_address] = value }]
+  def domain_definition = ['--domain=DOMAIN', ->(value) { @permission[:domain] = value }]
+  def role_definition = ['--role=ROLE', ->(value) { @permission[:role] = value }]
+  def remove_expiration_definition = ['--remove-expiration', ->(_value) { @remove_expiration = true }]
+
+  def allow_file_discovery_definition
+    [
+      '--[no-]allow-file-discovery',
+      ->(value) { @permission[:allow_file_discovery] = value }
+    ]
+  end
+
+  def expiration_definition
+    [
+      '--expiration=TIME',
+      ->(value) { @permission[:expiration_time] = DateTime.parse(value) }
+    ]
+  end
+
+  def default_options
+    @file_id = nil
+    @permission_id = nil
+    @permission = {
+      type: nil, email_address: nil, domain: nil, role: nil,
+      allow_file_discovery: nil, expiration_time: nil
+    }
+    @remove_expiration = nil
+  end
+
+  def validate(argv)
+    raise "Extra command line arguments: #{argv}" unless argv.empty?
+
+    raise 'Missing file_id' unless file_id
+
+    raise 'Missing permission_id' unless permission_id
+  end
+end
+
+drive_service = DriveV3.drive_service
+
+options = PermissionUpdateCli.new(ARGV)
+file_id = options.file_id
+permission_id = options.permission_id
+permission = options.permission
+remove_expiration = options.remove_expiration
+fields = '*'
+
+begin
+  result = drive_service.update_permission(file_id, permission_id, permission, remove_expiration:, fields:)
+  puts "Permission updated: #{result.to_h.pretty_inspect}"
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+end

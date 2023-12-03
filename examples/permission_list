@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# List permissions for a file or folder
+
+require 'drive_v3'
+
+file_id = ARGV[0] || ENV.fetch('FILE_ID', nil)
+raise 'Missing file_id' unless file_id
+
+drive_service = DriveV3.drive_service
+
+permissions = []
+
+# Number of files to return with each request
+#
+# Limiting to 2 for this example, normally this would be a lot higher
+# (default is 100)
+#
+page_size = 2
+
+# Signal to get first page of results
+#
+# nextPageToken property returns the page_token of the next page
+# of results. If nextPageToken is empty, there are no more pages.
+#
+page_token = nil
+
+# If `fields` is not specified, the following fields are returned for each permission:
+# ???
+#
+# Could return all possible fields by specifying `fields: '*'`.
+#
+# If you give fields, you must explicitly include `nextPageToken` if you want it.
+#
+# See [Return specific fields for a file](https://developers.google.com/drive/api/guides/fields-parameter)
+# for more information about how to retrieve other fields.
+#
+# fields = 'nextPageToken, files(id, name, parents, web_view_link)'
+fields = '*'
+
+loop do
+  permission_list = drive_service.list_permissions(file_id, fields:, page_token:, page_size:)
+  permissions += permission_list.permissions.map(&:to_h)
+  # Stop looping if there are no more pages
+  break unless (page_token = permission_list.next_page_token)
+end
+
+puts JSON.pretty_generate(permissions)
