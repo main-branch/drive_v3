@@ -21,8 +21,16 @@ file_id = ARGV[0] || '1MNb_59W87lj75-9HqrEQoFBdrQiNl96rDlRy87sDIjs'
 # fields = 'id, name, parents, web_view_link'
 fields = '*'
 
+# If `supports_all_drives` is false or not specified, the request will fail if
+# the file is in a shared drive.
+#
+# See [Search for files & folders](https://developers.google.com/drive/api/v3/search-files)
+# for more information about how to search for files in shared drives.
+#
+supports_all_drives = true
+
 begin
-  file = drive_service.get_file(file_id, fields:)
+  file = drive_service.get_file(file_id, fields:, supports_all_drives:)
   puts JSON.pretty_generate(file.to_h)
 rescue StandardError => e
   puts "An error occurred: #{e.message}"
