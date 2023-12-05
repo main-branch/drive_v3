@@ -4,6 +4,14 @@ Changes for each release are listed in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/) for its releases.
 
+## v0.2.0 (2023-12-04)
+
+[Full Changelog](https://github.com/main-branch/drive_v3/compare/v0.1.0..v0.2.0)
+
+Changes since v0.1.0:
+
+* e23a653 Add parameters to support searching all drives (#4)
+
 ## v0.1.0 (2023-12-02)
 
 [Full Changelog](https://github.com/main-branch/drive_v3/compare/cadfd09..v0.1.0)
