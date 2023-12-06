@@ -1,35 +1,143 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+# Create a file or folder in a Google Drive
+
+require 'optparse'
+
+# Parse the command line
+#
+# @example Create a file in a Google Drive
+#   file-create \
+#     [NAME] \
+#     [--parent ID] \
+#     [--mime-type MIME_TYPE] \
+#     [--content FILE_NAME [--content-type MIME_TYPE]]
+#
+# @example Create a new empty file with default title and mimetype in the user's My Drive
+#   file-create
+#
+# @example Create a file name 'My Data File' in the user's My Drive
+#   file-create 'My Data File'
+#
+# @example Create a file in a specific folder
+#   file-create 'My Data File' --parent '1V6RS_7_YgJmLDH-BDw3dpD8Np60Oi9ET'
+#
+# @example Create a specific kind of file (data file)
+#   file-create 'My Data File' --mime-type 'text/plain'
+#
+# @example Create a specific kind of file (spreadsheet)
+#   file-create 'My Data File' --mime-type 'application/vnd.google-apps.spreadsheet'
+#
+# @example Create a specific kind of file (document)
+#   file-create 'My Data File' --mime-type 'application/vnd.google-apps.document'
+#
+# @example Create a folder
+#   file-create 'My New Folder' --mime-type 'application/vnd.google-apps.folder'
+#
+# @example Create a file and load it with data from a file
+#   file-create 'My Data File' --content 'data.csv' --content-type 'text/csv'
+#
+# @example For a anyone
+#   permission-create FILE_ID \
+#     --type anyone \
+#     --role ROLE \
+#     [--expiration TIME] \
+#     [{--allow-file-discovery | --no-allow-file-discovery}]
+#
+class ParseCommandLine
+  def initialize(argv)
+    @argv = argv.dup
+    default_options
+    parser.parse!(@argv)
+    @name = @argv.shift
+    validate(@argv)
+  end
+
+  attr_reader :name, :parent_id, :mime_type, :content, :content_type
+
+  def banner = <<~BANNER
+    Usage:
+
+      #{$PROGRAM_NAME} [NAME] [options]
+
+    Creates a file in a Google Drive and displays the JSON properties
+    of that file.
+
+    WARNING: Omitting NAME will create a file named 'Untitled'.
+
+    Options:
+  BANNER
+
+  def parser
+    @parser ||= OptionParser.new(banner) do |opts|
+      option_definitions.each { |option_definition| opts.on(*option_definition) }
+    end
+  end
+
+  def help
+    puts parser
+    exit
+  end
+
+  def option_definitions
+    [
+      help_definition,
+      parent_definition, mime_type_definition,
+      content_definition, content_type_definition
+    ].freeze
+  end
+
+  def help_definition = ['-h', '--help', '', ->(_value) { help }]
+  def parent_definition = ['--parent=ID', ->(value) { @parent_id = value }]
+  def mime_type_definition = ['--mime-type=MIME_TYPE', ->(value) { @mime_type = value }]
+  def content_definition = ['--content=FILE_NAME', ->(value) { @content = value }]
+  def content_type_definition = ['--content_type=MIME_TYPE', ->(value) { @content_type = value }]
+
+  def default_options; end
+
+  def validate(argv)
+    raise "Extra command line arguments: #{argv}" unless argv.empty?
+  end
+end
+
 # Create a data file
 #
 # When creating a data file, upload_source should be an IO object that
 # responds to `read` and `size` (e.g. StringIO) or a string that names
 # an existing file to upload.
 
+options = ParseCommandLine.new(ARGV)
+
 require 'drive_v3'
 require 'json'
 
 drive_service = DriveV3.drive_service
 
-# If name is not specified as part of a create request, the file name is named
-# 'Untitled'.
-name = 'My data file'
+# If name is not specified as part of a create request (or it is nil), the file name
+# is named 'Untitled'.
+name = options.name
 
 # If parents not specified as part of a create request or is an empty array, the
 # file is placed directly in the user's My Drive folder
 #
 # parents = ['id1', 'id2']
-parents = ['1V6RS_7_YgJmLDH-BDw3dpD8Np60Oi9ET']
+parents = []
+parents << options.parent_id if options.parent_id
 
 # The MIME type of the file. Drive will attempt to automatically detect an
 # appropriate value from uploaded content if no value is provided. The value
 # cannot be changed unless a new revision is uploaded.
 #
+# See
+# [Google Workspace & Google Drive supported MIME types](https://developers.google.com/drive/api/guides/mime-types)
+# for a list of supported MIME types.
+#
 # The default MIME type is 'text/plain'
 #
+#
 # mime_type = nil
-mime_type = 'application/vnd.google-apps.spreadsheet'
+mime_type = options.mime_type
 
 file_metadata = { name:, parents:, mime_type: }
 
@@ -47,7 +155,7 @@ fields = '*'
 # data file.
 #
 # upload_source = StringIO.new("This is my letter to the World\nThat never wrote to Me")
-upload_source = StringIO.new("1,2,3\n4,5,6\n7,8,9")
+upload_source = options.content
 
 # Content type indicates the MIME type of the upload_source. If not specified,
 # the content type will be determined by calling MIME::Types.of with the
@@ -56,10 +164,21 @@ upload_source = StringIO.new("1,2,3\n4,5,6\n7,8,9")
 # content_type = 'text/plain'
 # CSV content type
 # content_type = nil
-content_type = 'text/csv'
+content_type = options.content_type
+
+# Indicate that this application supports files in shared drives. An error will result if
+# this is false (or omitted) AND `create_file` tries to create a file in a shared drive.
+#
+supports_all_drives = true
 
 begin
-  file = drive_service.create_file(file_metadata, fields:, upload_source:, content_type:)
+  file = drive_service.create_file(
+    file_metadata,
+    fields:,
+    upload_source:,
+    content_type:,
+    supports_all_drives:
+  )
   puts JSON.pretty_generate(file.to_h)
 rescue StandardError => e
   puts "An error occurred: #{e.message}"

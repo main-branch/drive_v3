@@ -126,8 +126,21 @@ permission = options.permission
 remove_expiration = options.remove_expiration
 fields = '*'
 
+# Indicate that this application supports files in shared drives. An error will
+# result if this is false (or omitted) AND you are trying to update permissions
+# on a file in a shared drive.
+#
+supports_all_drives = true
+
 begin
-  result = drive_service.update_permission(file_id, permission_id, permission, remove_expiration:, fields:)
+  result = drive_service.update_permission(
+    file_id,
+    permission_id,
+    permission,
+    remove_expiration:,
+    fields:,
+    supports_all_drives:
+  )
   puts "Permission updated: #{result.to_h.pretty_inspect}"
 rescue StandardError => e
   puts "An error occurred: #{e.message}"

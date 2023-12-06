@@ -14,10 +14,15 @@ drive_service = DriveV3.drive_service
 file_id = ARGV[0] || ENV.fetch('FILE_ID', nil)
 raise 'Missing file_id' unless file_id
 
+# Indicate that this application supports files in shared drives. An error will result if
+# this is false (or omitted) AND `delete_file` tries to create a spreadsheet in a shared drive.
+#
+supports_all_drives = true
+
 begin
   print 'Delete file...'
   # Does not return anything
-  drive_service.delete_file(file_id)
+  drive_service.delete_file(file_id, supports_all_drives:)
   puts 'Success'
 rescue StandardError => e
   puts "An error occurred: #{e.message}"

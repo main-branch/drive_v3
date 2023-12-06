@@ -71,9 +71,17 @@ fields = '*'
 #
 include_items_from_all_drives = true
 
+# Indicate that this application supports files in shared drives. An error will result if
+# this is false (or omitted) AND `list_files` returns a file from a shared drive.
+#
+supports_all_drives = true
+
 loop do
   file_list = @drive_service.list_files(
-    q:, fields:, include_items_from_all_drives:,
+    q:,
+    fields:,
+    include_items_from_all_drives:,
+    supports_all_drives:,
     page_token:, page_size:
   )
   files += file_list.files.map(&:to_h)
@@ -84,3 +92,4 @@ end
 # Print as JSON with links to each file and its parents
 
 puts JSON.pretty_generate(files)
+# puts files.count

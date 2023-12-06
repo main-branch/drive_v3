@@ -39,8 +39,20 @@ page_token = nil
 # fields = 'nextPageToken, files(id, name, parents, web_view_link)'
 fields = '*'
 
+# Indicate that this application supports files in shared drives. An error will
+# result if this is false (or omitted) AND you are trying to list the permissions
+# on a file in a shared drive.
+#
+supports_all_drives = true
+
 loop do
-  permission_list = drive_service.list_permissions(file_id, fields:, page_token:, page_size:)
+  permission_list = drive_service.list_permissions(
+    file_id,
+    fields:,
+    page_token:,
+    page_size:,
+    supports_all_drives:
+  )
   permissions += permission_list.permissions.map(&:to_h)
   # Stop looping if there are no more pages
   break unless (page_token = permission_list.next_page_token)
