@@ -51,6 +51,12 @@ permission = Google::Apis::DriveV3::Permission.new(
   role: 'writer'
 )
 
+# Indicate that this application supports files in shared drives. An error will
+# result if this is false (or omitted) AND you are trying to update the permissions
+# on a file in a shared drive.
+#
+supports_all_drives = true
+
 begin
   results = [].tap do |request_results|
     drive_service.batch do |service|
@@ -59,7 +65,7 @@ begin
         #
         # Collect the result (or error if there is one) in the block passed to
         # `create_permission`
-        service.create_permission(spreadsheet_id, permission) do |res, err|
+        service.create_permission(spreadsheet_id, permission, supports_all_drives:) do |res, err|
           request_results << (res || err.message)
         end
       end

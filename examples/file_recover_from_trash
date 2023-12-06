@@ -14,10 +14,19 @@ drive_service = DriveV3.drive_service
 file_id = ARGV[0] || ENV.fetch('FILE_ID', nil)
 raise 'Missing file_id' unless file_id
 
+# Indicate that this application supports files in shared drives. An error will result if
+# this is false (or omitted) AND you are trying to update a file in a shared drive.
+#
+supports_all_drives = true
+
 begin
   print 'Recovering trashed file...'
   file_object = { trashed: false }
-  file = drive_service.update_file(file_id, file_object)
+  file = drive_service.update_file(
+    file_id,
+    file_object,
+    supports_all_drives:
+  )
   puts "update_file result:\n#{file.to_h.pretty_inspect}"
 rescue StandardError => e
   puts "An error occurred: #{e.message}"

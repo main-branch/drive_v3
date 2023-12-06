@@ -155,8 +155,19 @@ drive_service = DriveV3.drive_service
 options = PermissionCreateCli.new(ARGV)
 fields = '*'
 
+# Indicate that this application supports files in shared drives. An error will
+# result if this is false (or omitted) AND you are trying to update the permissions
+# on a file in a shared drive.
+#
+supports_all_drives = true
+
 begin
-  result = drive_service.create_permission(options.file_id, options.permission, fields:)
+  result = drive_service.create_permission(
+    options.file_id,
+    options.permission,
+    fields:,
+    supports_all_drives:
+  )
   # The result.id is 'anyoneWithLink' if type=anyone
   # The result.id is of the existing permission if it already exists
   puts JSON.pretty_generate(result.to_h)

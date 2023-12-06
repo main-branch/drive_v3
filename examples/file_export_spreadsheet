@@ -14,6 +14,15 @@ require 'json'
 
 drive_service = DriveV3.drive_service
 
+# Indicate that this application supports files in shared drives. An error will
+# result if this is false (or omitted) AND you try to do something with a file or
+# folder in a shared drive.
+#
+# Note that the `export_file` method does not require this parameter to export
+# a file from a shared drive.
+#
+supports_all_drives = true
+
 # First create a spreadsheet, populating with some data.
 # Then get the file id of the spreadsheet.
 
@@ -25,7 +34,13 @@ fields = 'id, name'
 upload_source = StringIO.new("1,2,3\n4,5,6\n7,8,9")
 content_type = 'text/csv'
 begin
-  file = drive_service.create_file(file_metadata, fields:, upload_source:, content_type:)
+  file = drive_service.create_file(
+    file_metadata,
+    fields:,
+    upload_source:,
+    content_type:,
+    supports_all_drives:
+  )
   puts JSON.pretty_generate(file.to_h)
 rescue StandardError => e
   puts "An error occurred: #{e.message}"
@@ -39,7 +54,12 @@ mime_type = 'application/pdf'
 download_dest = "#{file.name}.pdf"
 
 begin
-  drive_service.export_file(file_id, mime_type, download_dest:)
+  drive_service.export_file(
+    file_id,
+    mime_type,
+    download_dest:,
+    supports_all_drives:
+  )
 rescue StandardError => e
   puts "An error occurred: #{e.message}"
   exit 1

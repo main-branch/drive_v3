@@ -15,10 +15,15 @@ raise 'Missing file_id' unless file_id
 #
 upload_source = StringIO.new('This is the content that replaced the original content')
 
+# Indicate that this application supports files in shared drives. An error will result if
+# this is false (or omitted) AND you are trying to update a file in a shared drive.
+#
+supports_all_drives = true
+
 # Replace the content of an existing file
 #
 begin
-  file = drive_service.update_file(file_id, upload_source:)
+  file = drive_service.update_file(file_id, upload_source:, supports_all_drives:)
   puts JSON.pretty_generate(file.to_h)
 rescue StandardError => e
   puts "An error occurred: #{e.message}"

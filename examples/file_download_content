@@ -17,10 +17,15 @@ raise 'Missing file_id' unless file_id
 # to.
 download_dest = StringIO.new
 
+# Indicate that this application supports files in shared drives. An error will result if
+# this is false (or omitted) AND `get_file` tries to get a file from s shared drive.
+#
+supports_all_drives = true
+
 # Read content from file
 #
 begin
-  drive_service.get_file(file_id, download_dest:)
+  drive_service.get_file(file_id, download_dest:, supports_all_drives:)
   puts JSON.pretty_generate(download_dest.string)
 rescue StandardError => e
   puts "An error occurred: #{e.message}"
