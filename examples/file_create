@@ -58,9 +58,13 @@ class ParseCommandLine
 
   def banner = <<~BANNER
     Usage:
-    #{$PROGRAM_NAME} [NAME] [options]
 
-    Creates a file in a Google Drive
+      #{$PROGRAM_NAME} [NAME] [options]
+
+    Creates a file in a Google Drive and displays the JSON properties
+    of that file.
+
+    WARNING: Omitting NAME will create a file named 'Untitled'.
 
     Options:
   BANNER
