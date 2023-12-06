@@ -4,53 +4,52 @@ Annotated examples written in Ruby.
 
 Checked (✅︎) topics are completed. Topics without a check still need to be added.
 
-* [Getting started](#getting-started)
-  * [✅︎ Creating a Google API service account](#︎-creating-a-google-api-service-account)
-  * [✅︎ Creating a DriveService instance](#︎-creating-a-driveservice-instance)
-  * [✅︎ Batching DriveService requests](#︎-batching-driveservice-requests)
-* [Files and folders](#files-and-folders)
-  * [✅︎ Search for files](#︎-search-for-files)
-  * [✅︎ Get file](#︎-get-file)
-  * [✅︎ Create an empty data file](#︎-create-an-empty-data-file)
-  * [✅︎ Create a folder](#︎-create-a-folder)
-  * [✅︎ Create a spreadsheet, document, or presentation](#︎-create-a-spreadsheet-document-or-presentation)
-  * [✅︎ Upload file data](#︎-upload-file-data)
-  * [✅︎ Download file data](#︎-download-file-data)
-  * [✅︎ Export file](#︎-export-file)
-  * [✅︎ Send file to trash](#︎-send-file-to-trash)
-  * [✅︎ Recover file from trash](#︎-recover-file-from-trash)
-  * [✅︎ Delete a file](#︎-delete-a-file)
-* [Share files, folders, and drives](#share-files-folders-and-drives)
-  * [✅︎ Create permission](#︎-create-permission)
-  * [✅︎ List permissions](#︎-list-permissions)
-  * [✅︎ Update permission](#︎-update-permission)
-  * [✅︎ Delete permission](#︎-delete-permission)
-* [Shortcuts](#shortcuts)
-  * [Create a shortcut to a file](#create-a-shortcut-to-a-file)
-  * [Search for shortcuts](#search-for-shortcuts)
-* [Other](#other)
-  * [File revisions](#file-revisions)
-  * [Store application-specific data](#store-application-specific-data)
-  * [Manage file metadata](#manage-file-metadata)
-  * [Manage comments and replies](#manage-comments-and-replies)
-  * [Add custom file properties](#add-custom-file-properties)
-  * [Create a shortcut to a Drive file](#create-a-shortcut-to-a-drive-file)
-  * [Create a shortcut to app content](#create-a-shortcut-to-app-content)
-  * [Protect file content from modification](#protect-file-content-from-modification)
-  * [Access link-shared files using resource keys](#access-link-shared-files-using-resource-keys)
-* [Handle changes](#handle-changes)
-  * [Identify which change log to track](#identify-which-change-log-to-track)
-  * [Track changes for users and shared drives](#track-changes-for-users-and-shared-drives)
-  * [Retrieve changes](#retrieve-changes)
-  * [Receive notifications for resource changes](#receive-notifications-for-resource-changes)
-* [Manage labels](#manage-labels)
-  * [Manage labels](#manage-labels-1)
-  * [Set label field](#set-label-field)
-  * [Unset label field](#unset-label-field)
-  * [Remove label](#remove-label)
-  * [List labels from file](#list-labels-from-file)
-  * [Return specific labels from a file](#return-specific-labels-from-a-file)
-  * [Search by label or field](#search-by-label-or-field)
+* [Google Drive Examples](#google-drive-examples)
+  * [Getting started](#getting-started)
+    * [✅︎ Creating a Google API service account](#︎-creating-a-google-api-service-account)
+    * [✅︎ Creating a DriveService instance](#︎-creating-a-driveservice-instance)
+    * [✅︎ Batching DriveService requests](#︎-batching-driveservice-requests)
+  * [Files and folders](#files-and-folders)
+    * [✅︎ Search for files](#︎-search-for-files)
+    * [✅︎ Get file](#︎-get-file)
+    * [✅︎ Create a file](#︎-create-a-file)
+    * [✅︎ Upload file data](#︎-upload-file-data)
+    * [✅︎ Download file data](#︎-download-file-data)
+    * [✅︎ Export file](#︎-export-file)
+    * [✅︎ Send file to trash](#︎-send-file-to-trash)
+    * [✅︎ Recover file from trash](#︎-recover-file-from-trash)
+    * [✅︎ Delete a file](#︎-delete-a-file)
+  * [Share files, folders, and drives](#share-files-folders-and-drives)
+    * [✅︎ Create permission](#︎-create-permission)
+    * [✅︎ List permissions](#︎-list-permissions)
+    * [✅︎ Update permission](#︎-update-permission)
+    * [✅︎ Delete permission](#︎-delete-permission)
+  * [Shortcuts](#shortcuts)
+    * [Create a shortcut to a file](#create-a-shortcut-to-a-file)
+    * [Search for shortcuts](#search-for-shortcuts)
+  * [Other](#other)
+    * [File revisions](#file-revisions)
+    * [Store application-specific data](#store-application-specific-data)
+    * [Manage file metadata](#manage-file-metadata)
+    * [Manage comments and replies](#manage-comments-and-replies)
+    * [Add custom file properties](#add-custom-file-properties)
+    * [Create a shortcut to a Drive file](#create-a-shortcut-to-a-drive-file)
+    * [Create a shortcut to app content](#create-a-shortcut-to-app-content)
+    * [Protect file content from modification](#protect-file-content-from-modification)
+    * [Access link-shared files using resource keys](#access-link-shared-files-using-resource-keys)
+  * [Handle changes](#handle-changes)
+    * [Identify which change log to track](#identify-which-change-log-to-track)
+    * [Track changes for users and shared drives](#track-changes-for-users-and-shared-drives)
+    * [Retrieve changes](#retrieve-changes)
+    * [Receive notifications for resource changes](#receive-notifications-for-resource-changes)
+  * [Manage labels](#manage-labels)
+    * [Manage labels](#manage-labels-1)
+    * [Set label field](#set-label-field)
+    * [Unset label field](#unset-label-field)
+    * [Remove label](#remove-label)
+    * [List labels from file](#list-labels-from-file)
+    * [Return specific labels from a file](#return-specific-labels-from-a-file)
+    * [Search by label or field](#search-by-label-or-field)
 
 ## Getting started
 
@@ -109,42 +108,37 @@ shows how to get a
 [File](https://github.com/googleapis/google-api-ruby-client/blob/main/generated/google-apis-drive_v3/lib/google/apis/drive_v3/classes.rb)
 from the drive and controlling which fields are returned.
 
-### ✅︎ Create an empty data file
+### ✅︎ Create a file
 
-To create a file that contains no metadata or content, use the `drive_service.create_file`
-method with no parameters. The file is given a kind of drive.file, an id, a name of
-"Untitled," and a mimeType of application/octet-stream.
+Using the `drive_service.create_file` with no parameters creates an empty data file
+with the following attributes:
+* `kind` is set to "drive.file",
+* `id` is set to a unique id
+* `name` is set to "Untitled"
+* `mime_type` of application/octet-stream.
+
+The `mime_type` parameter defines the type of file to create or to create a folder.
+See [Google Workspace & Google Drive supported MIME types](https://developers.google.com/drive/api/guides/mime-types)
+for a list of supported MIME types.
+
+Google Apps files (document, spreadsheet, or presentation) may be created by specifying
+their specific `mime-type`:
+* **Google Docs**: application/vnd.google-apps.document
+* **Google Sheets**: application/vnd.google-apps.spreadsheet
+* **Google Slides**: application/vnd.google-apps.presentation
+* See [Google Workspace & Google Drive supported MIME types](https://developers.google.com/drive/api/guides/mime-types)
+  for a complete list.
+
+See [Create and populate folders](https://developers.google.com/drive/api/guides/folder#create-folder)
+for more about creating a folder. A folder is a file with a `mime_type` of
+"application/vnd.google-apps.folder".
 
 Use the `:parents` parameter to give the id of the folder that should contain the
 file. Omitting this parameter or passing an empty array will place the new file
 in the user's `My Drive` root folder.
 
 [examples/file_create](https://github.com/main-branch/drive_v3/blob/main/examples/file_create)
-shows how to create an empty data file and write data to it.
-
-### ✅︎ Create a folder
-
-[examples/file_create_folder](https://github.com/main-branch/drive_v3/blob/main/examples/file_create_folder)
-shows how to create a folder by setting the appropriate mime-type.
-
-See [Create and populate folders](https://developers.google.com/drive/api/guides/folder#create-folder)
-for more information.
-
-### ✅︎ Create a spreadsheet, document, or presentation
-
-[examples/file_create_spreadsheet](https://github.com/main-branch/drive_v3/blob/main/examples/file_create_spreadsheet)
-shows how to create a blank spreadsheet by setting the appropriate mime-type.
-
-See [Create a spreadsheet](https://developers.google.com/sheets/api/guides/create#work_with_folders)
-for more information.
-
-Use the following mime-types for Google apps:
-* Spreadsheet: **application/vnd.google-apps.spreadsheet**
-* Document: **application/vnd.google-apps.document**
-* Presentation: **application/vnd.google-apps.presentation**
-
-See [Google Workspace & Google Drive supported MIME types](https://developers.google.com/drive/api/guides/mime-types)
-for a comprehensive list of MIME types supported by Google Drive.
+shows how to create a file specifying name, mime-type, parent, and initial data.
 
 ### ✅︎ Upload file data
 
