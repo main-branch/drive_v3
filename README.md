@@ -17,7 +17,6 @@ Gems in the Google API helper, extensions, and examples series:
 
 ## Contents
 
-op* [Contents](#contents)
 * [Contents](#contents)
 * [Installation](#installation)
 * [Examples](#examples)
