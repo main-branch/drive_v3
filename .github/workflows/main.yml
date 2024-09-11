@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Initialize Ruby
         uses: ruby/setup-ruby@v1
@@ -53,7 +53,7 @@ jobs:
         run: bundle exec rake spec
 
       - name: Report test coverage
-        uses: paambaati/codeclimate-action@v3.2.0
+        uses: paambaati/codeclimate-action@v9
         env:
           CC_TEST_REPORTER_ID: d9fb05c3480afd6287a0e6f97622d84fc33b9573b61ad6957188d3ce647f42b4
         with:
