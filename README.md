@@ -3,7 +3,7 @@
 [![Gem Version](https://badge.fury.io/rb/drive_v3.svg)](https://badge.fury.io/rb/drive_v3)
 [![Documentation](https://img.shields.io/badge/Documentation-Latest-green)](https://rubydoc.info/gems/drive_v3/)
 [![Change Log](https://img.shields.io/badge/CHANGELOG-Latest-green)](https://rubydoc.info/gems/drive_v3/file/CHANGELOG.md)
-[![Build Status](https://github.com/main-branch/drive_v3/workflows/CI%20Build/badge.svg?branch=main)](https://github.com/main-branch/drive_v3/actions?query=workflow%3ACI%20Build)
+[![Build Status](https://github.com/main-branch/drive_v3/actions/workflows/continuous_integration.yml/badge.svg)](https://github.com/main-branch/drive_v3/actions/workflows/continuous_integration.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/aeebc016487c5cad881e/maintainability)](https://codeclimate.com/github/main-branch/drive_v3/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/aeebc016487c5cad881e/test_coverage)](https://codeclimate.com/github/main-branch/drive_v3/test_coverage)
 
