@@ -6,6 +6,7 @@
 [![Build Status](https://github.com/main-branch/drive_v3/actions/workflows/continuous_integration.yml/badge.svg)](https://github.com/main-branch/drive_v3/actions/workflows/continuous_integration.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/aeebc016487c5cad881e/maintainability)](https://codeclimate.com/github/main-branch/drive_v3/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/aeebc016487c5cad881e/test_coverage)](https://codeclimate.com/github/main-branch/drive_v3/test_coverage)
+[![Slack](https://img.shields.io/badge/slack-main--branch/drive__v3-yellow.svg?logo=slack)](https://main-branch.slack.com/archives/C07NG2J1C72)
 
 Unofficial helpers and extensions for the Google Drive V3 API
 
