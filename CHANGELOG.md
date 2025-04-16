@@ -4,6 +4,13 @@ Changes for each release are listed in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/) for its releases.
 
+## [0.3.1](https://github.com/main-branch/drive_v3/compare/v0.3.0...v0.3.1) (2025-04-16)
+
+
+### Bug Fixes
+
+* Automate commit-to-publish workflow ([9a07c66](https://github.com/main-branch/drive_v3/commit/9a07c663c0af7b80775d8b43a30357313c2733f1))
+
 ## v0.3.0 (2024-10-11)
 
 [Full Changelog](https://github.com/main-branch/drive_v3/compare/v0.2.1..v0.3.0)
