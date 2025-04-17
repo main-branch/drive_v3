@@ -4,6 +4,13 @@ Changes for each release are listed in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/) for its releases.
 
+## [0.3.2](https://github.com/main-branch/drive_v3/compare/v0.3.1...v0.3.2) (2025-04-17)
+
+
+### Bug Fixes
+
+* Do not trigger build workflows after merging to main or for release PRs ([c4fd435](https://github.com/main-branch/drive_v3/commit/c4fd4353eabe79480723200d6aa0b9d4ba437d70))
+
 ## [0.3.1](https://github.com/main-branch/drive_v3/compare/v0.3.0...v0.3.1) (2025-04-16)
 
 
